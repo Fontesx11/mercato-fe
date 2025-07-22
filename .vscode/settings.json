@@ -1,0 +1,67 @@
+{
+  "remote.WSL.fileWatcher.polling": true,
+  "remote.WSL.fileWatcher.pollingInterval": 2500,
+  "eslint.enable": true,
+  "eslint.format.enable": true,
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": "explicit",
+    "source.organizeImports": "explicit"
+  },
+  "[javascript]": {
+    "editor.formatOnSave": true,
+    "editor.codeActionsOnSave": ["source.addMissingImports", "source.organizeImports", "source.fixAll.stylelint", "source.fixAll.eslint"],
+    "editor.defaultFormatter": "dbaeumer.vscode-eslint"
+  },
+  "[javascriptreact]": {
+    "editor.formatOnSave": true
+  },
+  "[typescript]": {
+    "editor.defaultFormatter": "dbaeumer.vscode-eslint"
+  },
+  "editor.fontLigatures": true,
+  "typescript.validate.enable": true,
+  "telemetry.telemetryLevel": "off",
+  "telemetry.enableTelemetry": false,
+  "terminal.integrated.fontFamily": "monospace, PowerlineSymbols, 'MesloLGS NF'",
+  "jest.debugMode": true,
+  "explorer.compactFolders": false,
+  "workbench.editor.showTabs": "multiple",
+  "explorer.confirmDelete": false,
+  "javascript.updateImportsOnFileMove.enabled": "always",
+  "gitlens.gitCommands.skipConfirmations": ["fetch:command", "switch:command", "stash-push:command"],
+  "workbench.editor.highlightModifiedTabs": true,
+  "files.trimFinalNewlines": true,
+  "editor.fontSize": 15,
+  "redhat.telemetry.enabled": false,
+  "git.suggestSmartCommit": false,
+  "workbench.iconTheme": "material-icon-theme",
+  "editor.renderLineHighlight": "gutter",
+  "material-icon-theme.folders.associations": {
+    "infra": "app",
+    "entities": "class",
+    "schemas": "class",
+    "typeorm": "database",
+    "repositories": "mappings",
+    "http": "container",
+    "migrations": "tools",
+    "module": "components",
+    "implementations": "core",
+    "dtos": "typescript",
+    "fakes": "mock",
+    "websockets": "pipe",
+    "protos": "pipe",
+    "grpc": "pipe"
+  },
+  "material-icon-theme.files.associations": {
+    "ormconfig.json": "database",
+    "tsconfig.json": "tune",
+    "*.proto": "3d"
+  },
+  "prettier.endOfLine": "auto",
+ 
+  "git.confirmSync": false,
+  "explorer.fileNesting.enabled": true,
+  "security.workspace.trust.untrustedFiles": "open",
+  "prettier.printWidth": 200,
+  "bddFeatureEditor.language": "pt"
+}
