@@ -27,7 +27,7 @@ const router = createBrowserRouter([
 
   // Rota de Layout: envolve as outras rotas
   {
-    // loader: verifyLoggedIn,
+    loader: verifyLoggedIn,
     element: <MainLayout />,
     children: routesWithLayout,
   },
