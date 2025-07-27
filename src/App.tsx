@@ -2,6 +2,7 @@ import { useEffect } from 'react';
 import { createBrowserRouter, type RouteObject, RouterProvider } from 'react-router-dom';
 
 import { MainLayout } from './components/layout/MainLayout';
+import { adminScreenRoutes } from './modules/admin/routes';
 import { homeScreenRoutes } from './modules/home/routes';
 import { loginRoutes } from './modules/login/routes';
 import { paymentRoutes } from './modules/payment/routes';
@@ -23,10 +24,11 @@ const router = createBrowserRouter([
   // Rotas (sem Header/Footer)
   ...loginRoutes,
   ...registerRoutes,
+  ...adminScreenRoutes,
 
   // Rota de Layout: envolve as outras rotas
   {
-    loader: verifyLoggedIn,
+    //loader: verifyLoggedIn,
     element: <MainLayout />,
     children: routesWithLayout,
   },
