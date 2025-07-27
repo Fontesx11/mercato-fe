@@ -9,8 +9,7 @@ import {
   Plus,
   Search,
   ShoppingCart,
-  Star,
-  User,
+  Star
 } from 'lucide-react';
 import { useState } from 'react';
 import { Link } from 'react-router';
@@ -44,49 +43,6 @@ export default function ProductScreen() {
 
   return (
     <div className="min-h-screen bg-yellow-50">
-      {/* Header */}
-      <header className="bg-teal-400 text-white px-4 py-3">
-        <div className="max-w-7xl mx-auto flex items-center justify-between">
-          <div className="flex items-center gap-8">
-            <div className="flex items-center gap-2">
-              <div className="w-8 h-8 bg-white rounded flex items-center justify-center">
-                <ShoppingCart className="w-5 h-5 text-teal-400" />
-              </div>
-              <div>
-                <div className="font-bold text-lg">Mercato</div>
-                <div className="text-xs">ONLINE</div>
-              </div>
-            </div>
-            <nav className="hidden md:flex items-center gap-6 text-sm">
-              <a href="#" className="hover:underline">
-                Home
-              </a>
-              <a href="#" className="hover:underline">
-                Discover
-              </a>
-              <a href="#" className="hover:underline">
-                Blog
-              </a>
-              <a href="#" className="hover:underline">
-                About Us
-              </a>
-              <a href="#" className="hover:underline">
-                Contact
-              </a>
-              <a href="#" className="hover:underline">
-                Careers
-              </a>
-            </nav>
-          </div>
-          <div className="flex items-center gap-4">
-            <User className="w-5 h-5" />
-            <div className="w-6 h-6 bg-white rounded-full flex items-center justify-center">
-              <span className="text-teal-400 text-xs font-bold">?</span>
-            </div>
-          </div>
-        </div>
-      </header>
-
       {/* Search Bar */}
       <div className="bg-yellow-50 px-4 py-6">
         <div className="max-w-7xl mx-auto flex items-center gap-4">
@@ -324,54 +280,6 @@ export default function ProductScreen() {
           </div>
         </div>
       </div>
-
-      {/* Footer */}
-      <footer className="bg-blue-400 text-white mt-16">
-        <div className="max-w-7xl mx-auto px-4 py-12">
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
-            <div>
-              <h3 className="font-bold text-lg mb-4">Sweetdeli</h3>
-              <div className="space-y-2 text-sm">
-                <p>Contato</p>
-                <p>sac@mercatoonline.com</p>
-                <p>+55 61 92345-0704</p>
-                <p>123 Rua, Pernambuco, Brasil</p>
-              </div>
-            </div>
-            <div>
-              <h3 className="font-bold text-lg mb-4">Outros sites</h3>
-              <div className="space-y-2 text-sm">
-                <p>Desenvolvedores</p>
-                <p>Mercato Pay</p>
-                <p>Envios</p>
-                <p>Minha Página</p>
-              </div>
-            </div>
-            <div>
-              <h3 className="font-bold text-lg mb-4">Sobre o</h3>
-              <div className="space-y-2 text-sm">
-                <p>Mercato Online</p>
-                <p>Sustentabilidade</p>
-                <p>Tendências</p>
-                <p>Investor relations</p>
-              </div>
-            </div>
-            <div>
-              <h3 className="font-bold text-lg mb-4">Get the app</h3>
-              <div className="space-y-3">
-                <div className="bg-black rounded-lg px-4 py-2 text-xs">
-                  <div>Download on the</div>
-                  <div className="font-bold">App Store</div>
-                </div>
-                <div className="bg-black rounded-lg px-4 py-2 text-xs">
-                  <div>GET IT ON</div>
-                  <div className="font-bold">Google Play</div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </footer>
     </div>
   );
 }

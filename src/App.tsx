@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import { createBrowserRouter, type RouteObject, RouterProvider } from 'react-router-dom';
 
-import { adminScreenRoutes } from './modules/admin/routes';
+import { MainLayout } from './components/layout/MainLayout';
 import { homeScreenRoutes } from './modules/home/routes';
 import { loginRoutes } from './modules/login/routes';
 import { paymentRoutes } from './modules/payment/routes';
@@ -13,17 +13,24 @@ import { useGlobalContext } from './shared/hooks/useGlobalContext';
 import { useNotification } from './shared/hooks/useNotifcation';
 import { useRequest } from './shared/hooks/useResquest';
 
-const routes: RouteObject[] = [...loginRoutes, ...paymentRoutes, ...homeScreenRoutes,
+const routesWithLayout: RouteObject[] = [
+  ...homeScreenRoutes,
   ...productScreenRoutes,
-  ...paymentRoutes, ...adminScreenRoutes];
-const routesLoggedIn: RouteObject[] = [
- 
-].map((route) => ({
-  //...route,
-  //loader: verifyLoggedIn,
-}));
+  ...paymentRoutes,
+];
 
-const router = createBrowserRouter([...routes, ...routesLoggedIn, ...registerRoutes]);
+const router = createBrowserRouter([
+  // Rotas (sem Header/Footer)
+  ...loginRoutes,
+  ...registerRoutes,
+
+  // Rota de Layout: envolve as outras rotas
+  {
+    loader: verifyLoggedIn,
+    element: <MainLayout />,
+    children: routesWithLayout,
+  },
+]);
 
 function App() {
   const { contextHolder } = useNotification();
