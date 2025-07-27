@@ -1,5 +1,5 @@
 import Logo from "@/logo.svg?react";
-import { Search, ShoppingCart } from 'lucide-react';
+import { Search } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import UserProfileDropdown from '../UserProfileDropdown';
 
@@ -10,7 +10,6 @@ export default function Header() {
         <div className="flex items-center space-x-8">
           <div className="bg-orange-100 px-4 py-2 rounded-lg flex items-center space-x-2">
             <Logo className="w-10 h-10" />
-            <ShoppingCart className="w-10 h-10" />
             <div>
               <div className="font-bold text-teal-800">Mercato</div>
               <div className="text-xs text-orange-600 font-semibold">ONLINE</div>
