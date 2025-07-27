@@ -1,6 +1,7 @@
 import { Apple, Facebook, Mail, ShoppingCart } from 'lucide-react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
+import { io } from 'socket.io-client';
 
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
@@ -12,6 +13,22 @@ export default function RegisterScreen() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [acceptTerms, setAcceptTerms] = useState(false);
+
+  useEffect(() => {
+    const socket = io('http://localhost:3000'); // Ajuste a URL
+
+    socket.on('connect', () => {
+      console.log('Conectado ao servidor WebSocket');
+    });
+
+    socket.on('payment-status', (data) => {
+      alert(`Pagamento ${data.status} - ID: ${data.id}`);
+    });
+
+    return () => {
+      socket.disconnect();
+    };
+  }, []);
 
   return (
     <div className="min-h-screen flex">
