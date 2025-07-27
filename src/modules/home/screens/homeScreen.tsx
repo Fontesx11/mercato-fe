@@ -9,8 +9,7 @@ import {
   Plus,
   Search,
   ShoppingCart,
-  Star,
-  User,
+  Star
 } from 'lucide-react';
 import { useState } from 'react';
 
@@ -19,6 +18,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import UserProfileDropdown from '@/components/UserProfileDropdown';
 
 export default function HomeScreen() {
   const [quantity, setQuantity] = useState(1);
@@ -78,10 +78,10 @@ export default function HomeScreen() {
             </nav>
           </div>
           <div className="flex items-center gap-4">
-            <User className="w-5 h-5" />
             <div className="w-6 h-6 bg-white rounded-full flex items-center justify-center">
               <span className="text-teal-400 text-xs font-bold">?</span>
             </div>
+            <UserProfileDropdown />
           </div>
         </div>
       </header>
