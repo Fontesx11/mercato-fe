@@ -1,7 +1,7 @@
 import { useState } from 'react';
 
-import { homeScreenRoutesEnum } from '@/modules/home/routes';
 
+import { homeScreenRoutesEnum } from '@/modules/home/routes';
 import type { AuthType } from '../../modules/login/types/AuthType';
 import { ERROR_INVALID_PASSWORD } from '../constants/errosStatus';
 import { URL_AUTH } from '../constants/urls';
@@ -18,7 +18,7 @@ export const useRequest = () => {
 
   const authRequest = async (body: unknown, navigate: (path: string) => void): Promise<void> => {
     setLoading(true);
-
+    navigate(homeScreenRoutesEnum.HOME);
     await connectionAPIPost<AuthType>(URL_AUTH, body)
       .then((res) => {
         setUser(res.user);

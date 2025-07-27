@@ -3,6 +3,7 @@ import { createBrowserRouter, type RouteObject, RouterProvider } from 'react-rou
 
 import { homeScreenRoutes } from './modules/home/routes';
 import { loginRoutes } from './modules/login/routes';
+import { productScreenRoutes } from './modules/product/routes';
 import { registerRoutes } from './modules/register/routes';
 import { URL_USER } from './shared/constants/urls';
 import { MethodsEnum } from './shared/enums/methods.enum';
@@ -11,8 +12,8 @@ import { useGlobalContext } from './shared/hooks/useGlobalContext';
 import { useNotification } from './shared/hooks/useNotifcation';
 import { useRequest } from './shared/hooks/useResquest';
 
-const routes: RouteObject[] = [...loginRoutes];
-const routesLoggedIn: RouteObject[] = [...homeScreenRoutes].map((route) => ({
+const routes: RouteObject[] = [...loginRoutes, ...homeScreenRoutes, ...productScreenRoutes];
+const routesLoggedIn: RouteObject[] = [...productScreenRoutes].map((route) => ({
   ...route,
   loader: verifyLoggedIn,
 }));
