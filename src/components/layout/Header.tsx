@@ -1,5 +1,6 @@
-import Logo from "@/logo.svg?react";
-import { Search } from 'lucide-react';
+import { Badge } from '@/components/ui/badge';
+import Logo from '@/logo.svg?react';
+import { Search, ShoppingCart } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import UserProfileDropdown from '../UserProfileDropdown';
 
@@ -41,6 +42,14 @@ export default function Header() {
         </div>
         <div className="flex items-center space-x-4">
           <Search className="w-5 h-5 text-teal-800" />
+          <div className="relative">
+            <Link to="/cart">
+              <ShoppingCart className="h-6 w-6" />
+              <Badge className="absolute -top-2 -right-2 bg-red-500 text-white text-xs h-5 w-5 rounded-full flex items-center justify-center p-0">
+                2
+              </Badge>
+            </Link>
+          </div>
           <UserProfileDropdown />
         </div>
       </div>

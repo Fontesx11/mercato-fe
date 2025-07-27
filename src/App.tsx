@@ -2,6 +2,7 @@ import { useEffect } from 'react';
 import { createBrowserRouter, type RouteObject, RouterProvider } from 'react-router-dom';
 
 import { MainLayout } from './components/layout/MainLayout';
+import { cartRoutes } from './modules/cart/routes';
 import { homeScreenRoutes } from './modules/home/routes';
 import { loginRoutes } from './modules/login/routes';
 import { paymentRoutes } from './modules/payment/routes';
@@ -18,6 +19,7 @@ const routesWithLayout: RouteObject[] = [
   ...homeScreenRoutes,
   ...productScreenRoutes,
   ...paymentRoutes,
+  ...cartRoutes,
 ];
 
 const router = createBrowserRouter([
@@ -27,7 +29,7 @@ const router = createBrowserRouter([
 
   // Rota de Layout: envolve as outras rotas
   {
-    loader: verifyLoggedIn,
+    // loader: verifyLoggedIn,
     element: <MainLayout />,
     children: routesWithLayout,
   },
