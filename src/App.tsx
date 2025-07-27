@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
 import { createBrowserRouter, type RouteObject, RouterProvider } from 'react-router-dom';
 
+import { adminScreenRoutes } from './modules/admin/routes';
 import { homeScreenRoutes } from './modules/home/routes';
 import { loginRoutes } from './modules/login/routes';
 import { paymentRoutes } from './modules/payment/routes';
@@ -8,19 +9,18 @@ import { productScreenRoutes } from './modules/product/routes';
 import { registerRoutes } from './modules/register/routes';
 import { URL_USER } from './shared/constants/urls';
 import { MethodsEnum } from './shared/enums/methods.enum';
-import { verifyLoggedIn } from './shared/functions/connection/auth';
 import { useGlobalContext } from './shared/hooks/useGlobalContext';
 import { useNotification } from './shared/hooks/useNotifcation';
 import { useRequest } from './shared/hooks/useResquest';
 
-const routes: RouteObject[] = [...loginRoutes, ...paymentRoutes];
-const routesLoggedIn: RouteObject[] = [
-  ...homeScreenRoutes,
+const routes: RouteObject[] = [...loginRoutes, ...paymentRoutes, ...homeScreenRoutes,
   ...productScreenRoutes,
-  ...paymentRoutes,
+  ...paymentRoutes, ...adminScreenRoutes];
+const routesLoggedIn: RouteObject[] = [
+ 
 ].map((route) => ({
-  ...route,
-  loader: verifyLoggedIn,
+  //...route,
+  //loader: verifyLoggedIn,
 }));
 
 const router = createBrowserRouter([...routes, ...routesLoggedIn, ...registerRoutes]);

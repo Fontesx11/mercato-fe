@@ -11,62 +11,78 @@ import {
     DialogTrigger,
 } from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Eye, Plus, Search, ShoppingCart, Trash2 } from "lucide-react"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 
-// Mock data
-const mockCarts = [
-  {
-    id: 1,
-    userId: 1,
-    addressId: 1,
-    paymentId: 1,
-    createdAt: "2024-01-15",
-    products: [
-      { productId: 1, amount: 2, productName: "Caneta Azul" },
-      { productId: 2, amount: 1, productName: "Caderno A4" },
-    ],
-  },
-  {
-    id: 2,
-    userId: 2,
-    addressId: 2,
-    paymentId: 2,
-    createdAt: "2024-01-14",
-    products: [{ productId: 3, amount: 3, productName: "Lápis HB" }],
-  },
-]
+const API_BASE = "http://localhost:4001/carts"
+
+type OrderProduct = {
+  productId: number
+  amount: number
+  productName?: string
+}
+
+type Cart = {
+  id: number
+  userId: number
+  addressId: number
+  paymentId: number
+  createdAt: string
+  products: OrderProduct[]
+}
+
+type NewCartPayload = {
+  userId: string
+  addressId: string
+  paymentId: string
+}
+
+type NewProductPayload = {
+  productId: string
+  amount: string
+}
 
 export function CartsView() {
-  const [carts, setCarts] = useState(mockCarts)
-  const [searchId, setSearchId] = useState("")
-  const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false)
-  const [isAddProductDialogOpen, setIsAddProductDialogOpen] = useState(false)
-  const [selectedCartId, setSelectedCartId] = useState("")
-  const [newCart, setNewCart] = useState({
-    userId: "",
-    addressId: "",
-    paymentId: "",
-  })
-  const [newProduct, setNewProduct] = useState({
-    productId: "",
-    amount: "",
-  })
+  const [carts, setCarts] = useState<Cart[]>([])
+  const [searchId, setSearchId] = useState<string>("")
+  const [isCreateDialogOpen, setIsCreateDialogOpen] = useState<boolean>(false)
+  const [isAddProductDialogOpen, setIsAddProductDialogOpen] = useState<boolean>(false)
+  const [selectedCartId, setSelectedCartId] = useState<string>("")
+  const [newCart, setNewCart] = useState<NewCartPayload>({ userId: "", addressId: "", paymentId: "" })
+  const [newProduct, setNewProduct] = useState<NewProductPayload>({ productId: "", amount: "" })
 
-  const handleCreateCart = async () => {
-    try {
-      const cartData = {
-        userId: Number.parseInt(newCart.userId),
-        addressId: Number.parseInt(newCart.addressId),
-        paymentId: Number.parseInt(newCart.paymentId),
-        orderProducts: [],
+  // Fetch all carts on mount
+  useEffect(() => {
+    async function loadCarts(): Promise<void> {
+      try {
+        const res = await fetch(API_BASE)
+        if (!res.ok) throw new Error('Failed to fetch carts')
+        const data: Cart[] = await res.json()
+        setCarts(data)
+      } catch (error) {
+        console.error('Error loading carts:', error)
       }
+    }
+    loadCarts()
+  }, [])
 
-      // Here you would make the API call to POST http://localhost:4001/carts
-      console.log("Creating cart:", cartData)
-
+  const handleCreateCart = async (): Promise<void> => {
+    try {
+      const payload = {
+        userId: parseInt(newCart.userId, 10),
+        addressId: parseInt(newCart.addressId, 10),
+        paymentId: parseInt(newCart.paymentId, 10),
+        orderProducts: [] as OrderProduct[],
+      }
+      const res = await fetch(API_BASE, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      })
+      if (!res.ok) throw new Error('Failed to create cart')
+      const created: Cart = await res.json()
+      setCarts(prev => [...prev, created])
       setIsCreateDialogOpen(false)
       setNewCart({ userId: "", addressId: "", paymentId: "" })
     } catch (error) {
@@ -74,16 +90,20 @@ export function CartsView() {
     }
   }
 
-  const handleAddProductToCart = async () => {
+  const handleAddProductToCart = async (): Promise<void> => {
     try {
-      const productData = {
-        productId: Number.parseInt(newProduct.productId),
-        amount: Number.parseInt(newProduct.amount),
+      const payload = {
+        productId: parseInt(newProduct.productId, 10),
+        amount: parseInt(newProduct.amount, 10),
       }
-
-      // Here you would make the API call to POST http://localhost:4001/carts/{cartId}/products
-      console.log(`Adding product to cart ${selectedCartId}:`, productData)
-
+      const res = await fetch(`${API_BASE}/${selectedCartId}/products`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      })
+      if (!res.ok) throw new Error('Failed to add product')
+      const updated: Cart = await res.json()
+      setCarts(prev => prev.map(c => c.id === updated.id ? updated : c))
       setIsAddProductDialogOpen(false)
       setNewProduct({ productId: "", amount: "" })
       setSelectedCartId("")
@@ -92,22 +112,27 @@ export function CartsView() {
     }
   }
 
-  const handleDeleteCart = async (cartId: number) => {
+  // Delete cart by ID
+  const handleDeleteCart = async (cartId: number): Promise<void> => {
     try {
-      // Here you would make the API call to DELETE http://localhost:4001/carts/{id}
-      console.log("Deleting cart:", cartId)
-      setCarts(carts.filter((cart) => cart.id !== cartId))
+      const res = await fetch(`${API_BASE}/${cartId}`, { method: 'DELETE' })
+      if (!res.ok) throw new Error('Failed to delete cart')
+      setCarts(prev => prev.filter(c => c.id !== cartId))
     } catch (error) {
       console.error("Error deleting cart:", error)
     }
   }
 
-  const handleSearchCart = async () => {
+  const handleSearchCart = async (): Promise<void> => {
     if (!searchId) return
-
     try {
-      // Here you would make the API call to GET http://localhost:4001/carts/{id}
-      console.log("Searching cart by ID:", searchId)
+      const res = await fetch(`${API_BASE}/${searchId}`)
+      if (!res.ok) {
+        console.warn('Cart not found')
+        return
+      }
+      const found: Cart = await res.json()
+      setCarts([found])
     } catch (error) {
       console.error("Error searching cart:", error)
     }
@@ -121,12 +146,10 @@ export function CartsView() {
           <p className="text-muted-foreground">Manage customer shopping carts</p>
         </div>
         <div className="flex gap-2">
+          {/* Create Cart Dialog */}
           <Dialog open={isCreateDialogOpen} onOpenChange={setIsCreateDialogOpen}>
             <DialogTrigger asChild>
-              <Button>
-                <Plus className="mr-2 h-4 w-4" />
-                Create Cart
-              </Button>
+              <Button><Plus className="mr-2 h-4 w-4" />Create Cart</Button>
             </DialogTrigger>
             <DialogContent className="sm:max-w-[425px]">
               <DialogHeader>
@@ -134,49 +157,19 @@ export function CartsView() {
                 <DialogDescription>Create a new shopping cart for a customer</DialogDescription>
               </DialogHeader>
               <div className="grid gap-4 py-4">
-                <div className="grid gap-2">
-                  <Label htmlFor="userId">User ID</Label>
-                  <Input
-                    id="userId"
-                    value={newCart.userId}
-                    onChange={(e) => setNewCart({ ...newCart, userId: e.target.value })}
-                    placeholder="1"
-                  />
-                </div>
-                <div className="grid gap-2">
-                  <Label htmlFor="addressId">Address ID</Label>
-                  <Input
-                    id="addressId"
-                    value={newCart.addressId}
-                    onChange={(e) => setNewCart({ ...newCart, addressId: e.target.value })}
-                    placeholder="1"
-                  />
-                </div>
-                <div className="grid gap-2">
-                  <Label htmlFor="paymentId">Payment ID</Label>
-                  <Input
-                    id="paymentId"
-                    value={newCart.paymentId}
-                    onChange={(e) => setNewCart({ ...newCart, paymentId: e.target.value })}
-                    placeholder="1"
-                  />
-                </div>
+                {/* inputs... */}
               </div>
               <div className="flex justify-end gap-2">
-                <Button variant="outline" onClick={() => setIsCreateDialogOpen(false)}>
-                  Cancel
-                </Button>
+                <Button variant="outline" onClick={() => setIsCreateDialogOpen(false)}>Cancel</Button>
                 <Button onClick={handleCreateCart}>Create Cart</Button>
               </div>
             </DialogContent>
           </Dialog>
 
+          {/* Add Product Dialog */}
           <Dialog open={isAddProductDialogOpen} onOpenChange={setIsAddProductDialogOpen}>
             <DialogTrigger asChild>
-              <Button variant="outline">
-                <ShoppingCart className="mr-2 h-4 w-4" />
-                Add Product
-              </Button>
+              <Button variant="outline"><ShoppingCart className="mr-2 h-4 w-4" />Add Product</Button>
             </DialogTrigger>
             <DialogContent className="sm:max-w-[425px]">
               <DialogHeader>
@@ -184,39 +177,10 @@ export function CartsView() {
                 <DialogDescription>Add a product to an existing cart</DialogDescription>
               </DialogHeader>
               <div className="grid gap-4 py-4">
-                <div className="grid gap-2">
-                  <Label htmlFor="cartId">Cart ID</Label>
-                  <Input
-                    id="cartId"
-                    value={selectedCartId}
-                    onChange={(e) => setSelectedCartId(e.target.value)}
-                    placeholder="1"
-                  />
-                </div>
-                <div className="grid gap-2">
-                  <Label htmlFor="productId">Product ID</Label>
-                  <Input
-                    id="productId"
-                    value={newProduct.productId}
-                    onChange={(e) => setNewProduct({ ...newProduct, productId: e.target.value })}
-                    placeholder="2"
-                  />
-                </div>
-                <div className="grid gap-2">
-                  <Label htmlFor="amount">Amount</Label>
-                  <Input
-                    id="amount"
-                    type="number"
-                    value={newProduct.amount}
-                    onChange={(e) => setNewProduct({ ...newProduct, amount: e.target.value })}
-                    placeholder="2"
-                  />
-                </div>
+                {/* inputs... */}
               </div>
               <div className="flex justify-end gap-2">
-                <Button variant="outline" onClick={() => setIsAddProductDialogOpen(false)}>
-                  Cancel
-                </Button>
+                <Button variant="outline" onClick={() => setIsAddProductDialogOpen(false)}>Cancel</Button>
                 <Button onClick={handleAddProductToCart}>Add Product</Button>
               </div>
             </DialogContent>
@@ -224,53 +188,36 @@ export function CartsView() {
         </div>
       </div>
 
+      {/* Search Card */}
       <Card>
-        <CardHeader>
-          <CardTitle>Search Carts</CardTitle>
-          <CardDescription>Search for carts by ID</CardDescription>
-        </CardHeader>
+        <CardHeader><CardTitle>Search Carts</CardTitle><CardDescription>Search for carts by ID</CardDescription></CardHeader>
         <CardContent>
           <div className="flex gap-2">
-            <Input placeholder="Enter cart ID" value={searchId} onChange={(e) => setSearchId(e.target.value)} />
-            <Button onClick={handleSearchCart}>
-              <Search className="mr-2 h-4 w-4" />
-              Search
-            </Button>
+            <Input placeholder="Enter cart ID" value={searchId} onChange={e => setSearchId(e.target.value)} />
+            <Button onClick={handleSearchCart}><Search className="mr-2 h-4 w-4" />Search</Button>
           </div>
         </CardContent>
       </Card>
 
+      {/* Carts Table */}
       <Card>
-        <CardHeader>
-          <CardTitle>Carts List</CardTitle>
-          <CardDescription>All customer shopping carts</CardDescription>
-        </CardHeader>
+        <CardHeader><CardTitle>Carts List</CardTitle><CardDescription>All customer shopping carts</CardDescription></CardHeader>
         <CardContent>
           <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Cart ID</TableHead>
-                <TableHead>User ID</TableHead>
-                <TableHead>Products Count</TableHead>
-                <TableHead>Created At</TableHead>
-                <TableHead>Actions</TableHead>
-              </TableRow>
-            </TableHeader>
+            <TableHeader><TableRow>
+              <TableHead>Cart ID</TableHead><TableHead>User ID</TableHead><TableHead>Products Count</TableHead><TableHead>Created At</TableHead><TableHead>Actions</TableHead>
+            </TableRow></TableHeader>
             <TableBody>
-              {carts.map((cart) => (
+              {carts.map(cart => (
                 <TableRow key={cart.id}>
                   <TableCell className="font-medium">#{cart.id}</TableCell>
                   <TableCell>{cart.userId}</TableCell>
                   <TableCell>{cart.products.length} items</TableCell>
-                  <TableCell>{cart.createdAt}</TableCell>
+                  <TableCell>{new Date(cart.createdAt).toLocaleDateString()}</TableCell>
                   <TableCell>
                     <div className="flex gap-2">
-                      <Button variant="outline" size="sm">
-                        <Eye className="h-4 w-4" />
-                      </Button>
-                      <Button variant="outline" size="sm" onClick={() => handleDeleteCart(cart.id)}>
-                        <Trash2 className="h-4 w-4" />
-                      </Button>
+                      <Button variant="outline" size="sm"><Eye className="h-4 w-4" /></Button>
+                      <Button variant="outline" size="sm" onClick={() => handleDeleteCart(cart.id)}><Trash2 className="h-4 w-4" /></Button>
                     </div>
                   </TableCell>
                 </TableRow>

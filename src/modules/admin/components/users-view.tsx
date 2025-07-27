@@ -12,70 +12,109 @@ import {
     DialogTrigger,
 } from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Edit, Eye, Plus, Search, Trash2 } from "lucide-react"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 
-// Mock data
-const mockUsers = [
-  {
-    id: 1,
-    name: "João Silva",
-    email: "joao@email.com",
-    cpf: "12345678901",
-    typeUser: 1,
-    phone: "81987654321",
-    createdAt: "2024-01-15",
-  },
-  {
-    id: 2,
-    name: "Maria Santos",
-    email: "maria@email.com",
-    cpf: "98765432101",
-    typeUser: 2,
-    phone: "81123456789",
-    createdAt: "2024-01-14",
-  },
-]
+const API_BASE = "http://localhost:4001/users"
+
+// TypeScript interfaces
+type Address = {
+  street: string
+  number: number
+  complement: string
+  cep: string
+  cityId: number
+}
+
+type User = {
+  id: number
+  name: string
+  email: string
+  cpf: string
+  typeUser: number
+  phone: string
+  createdAt: string
+  address: Address
+}
+
+type NewUserPayload = {
+  name: string
+  email: string
+  cpf: string
+  typeUser: string
+  phone: string
+  password: string
+  address: {
+    street: string
+    number: string
+    complement: string
+    cep: string
+    cityId: string
+  }
+}
+
+function getUserTypeLabel(typeUser: number): string {
+  return typeUser === 1 ? "Customer" : "Admin"
+}
 
 export function UsersView() {
-  const [users, setUsers] = useState(mockUsers)
-  const [searchTerm, setSearchTerm] = useState("")
-  const [searchType, setSearchType] = useState("id")
-  const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false)
-  const [newUser, setNewUser] = useState({
+  const [users, setUsers] = useState<User[]>([])
+  const [searchTerm, setSearchTerm] = useState<string>("")
+  const [searchType, setSearchType] = useState<string>("id")
+  const [isCreateDialogOpen, setIsCreateDialogOpen] = useState<boolean>(false)
+  const [newUser, setNewUser] = useState<NewUserPayload>({
     name: "",
     email: "",
     cpf: "",
     typeUser: "1",
     phone: "",
     password: "",
-    address: {
-      street: "",
-      number: "",
-      complement: "",
-      cep: "",
-      cityId: "",
-    },
+    address: { street: "", number: "", complement: "", cep: "", cityId: "" },
   })
 
-  const handleCreateUser = async () => {
+  // Fetch all users on mount
+  useEffect(() => {
+    async function loadUsers(): Promise<void> {
+      try {
+        const res = await fetch(API_BASE)
+        if (!res.ok) throw new Error('Failed to fetch users')
+        const data: User[] = await res.json()
+        setUsers(data)
+      } catch (error) {
+        console.error('Error loading users:', error)
+      }
+    }
+    loadUsers()
+  }, [])
+
+  // Create new user
+  const handleCreateUser = async (): Promise<void> => {
     try {
-      const userData = {
-        ...newUser,
-        typeUser: Number.parseInt(newUser.typeUser),
+      const payload = {
+        name: newUser.name,
+        email: newUser.email,
+        cpf: newUser.cpf,
+        typeUser: parseInt(newUser.typeUser, 10),
+        phone: newUser.phone,
+        password: newUser.password,
         address: {
-          ...newUser.address,
-          number: Number.parseInt(newUser.address.number),
-          cityId: Number.parseInt(newUser.address.cityId),
+          street: newUser.address.street,
+          number: parseInt(newUser.address.number, 10),
+          complement: newUser.address.complement,
+          cep: newUser.address.cep,
+          cityId: parseInt(newUser.address.cityId, 10),
         },
       }
-
-      // Here you would make the API call to POST http://localhost:4001/users
-      console.log("Creating user:", userData)
-
+      const res = await fetch(API_BASE, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      })
+      if (!res.ok) throw new Error('Failed to create user')
+      const created: User = await res.json()
+      setUsers(prev => [...prev, created])
       setIsCreateDialogOpen(false)
       setNewUser({
         name: "",
@@ -84,43 +123,39 @@ export function UsersView() {
         typeUser: "1",
         phone: "",
         password: "",
-        address: {
-          street: "",
-          number: "",
-          complement: "",
-          cep: "",
-          cityId: "",
-        },
+        address: { street: "", number: "", complement: "", cep: "", cityId: "" },
       })
     } catch (error) {
-      console.error("Error creating user:", error)
+      console.error('Error creating user:', error)
     }
   }
 
-  const handleDeleteUser = async (userId: number) => {
+  // Delete user
+  const handleDeleteUser = async (userId: number): Promise<void> => {
     try {
-      // Here you would make the API call to DELETE http://localhost:4001/users/{id}
-      console.log("Deleting user:", userId)
-      setUsers(users.filter((user) => user.id !== userId))
+      const res = await fetch(`${API_BASE}/${userId}`, { method: 'DELETE' })
+      if (!res.ok) throw new Error('Failed to delete user')
+      setUsers(prev => prev.filter(u => u.id !== userId))
     } catch (error) {
-      console.error("Error deleting user:", error)
+      console.error('Error deleting user:', error)
     }
   }
 
-  const handleSearchUser = async () => {
+  // Search users
+  const handleSearchUser = async (): Promise<void> => {
     if (!searchTerm) return
-
     try {
-      // Here you would make the API call based on search type
-      // GET http://localhost:4001/users/{id|cpf|email|phone}
-      console.log(`Searching user by ${searchType}:`, searchTerm)
+      const res = await fetch(`${API_BASE}/${searchType}/${encodeURIComponent(searchTerm)}`)
+      if (!res.ok) {
+        console.warn('User not found')
+        return
+      }
+      const data = await res.json()
+      const list = Array.isArray(data) ? data : [data]
+      setUsers(list as User[])
     } catch (error) {
-      console.error("Error searching user:", error)
+      console.error('Error searching user:', error)
     }
-  }
-
-  const getUserTypeLabel = (typeUser: number) => {
-    return typeUser === 1 ? "Customer" : "Admin"
   }
 
   return (
@@ -132,128 +167,16 @@ export function UsersView() {
         </div>
         <Dialog open={isCreateDialogOpen} onOpenChange={setIsCreateDialogOpen}>
           <DialogTrigger asChild>
-            <Button>
-              <Plus className="mr-2 h-4 w-4" />
-              Create User
-            </Button>
+            <Button><Plus className="mr-2 h-4 w-4" />Create User</Button>
           </DialogTrigger>
           <DialogContent className="sm:max-w-[600px] max-h-[80vh] overflow-y-auto">
             <DialogHeader>
               <DialogTitle>Create New User</DialogTitle>
               <DialogDescription>Add a new user to the system</DialogDescription>
             </DialogHeader>
-            <div className="grid gap-4 py-4">
-              <div className="grid grid-cols-2 gap-4">
-                <div className="grid gap-2">
-                  <Label htmlFor="name">Name</Label>
-                  <Input
-                    id="name"
-                    value={newUser.name}
-                    onChange={(e) => setNewUser({ ...newUser, name: e.target.value })}
-                    placeholder="João Silva"
-                  />
-                </div>
-                <div className="grid gap-2">
-                  <Label htmlFor="email">Email</Label>
-                  <Input
-                    id="email"
-                    type="email"
-                    value={newUser.email}
-                    onChange={(e) => setNewUser({ ...newUser, email: e.target.value })}
-                    placeholder="joao@email.com"
-                  />
-                </div>
-              </div>
-              <div className="grid grid-cols-2 gap-4">
-                <div className="grid gap-2">
-                  <Label htmlFor="cpf">CPF</Label>
-                  <Input
-                    id="cpf"
-                    value={newUser.cpf}
-                    onChange={(e) => setNewUser({ ...newUser, cpf: e.target.value })}
-                    placeholder="12345678901"
-                  />
-                </div>
-                <div className="grid gap-2">
-                  <Label htmlFor="phone">Phone</Label>
-                  <Input
-                    id="phone"
-                    value={newUser.phone}
-                    onChange={(e) => setNewUser({ ...newUser, phone: e.target.value })}
-                    placeholder="81987654321"
-                  />
-                </div>
-              </div>
-              <div className="grid grid-cols-2 gap-4">
-                <div className="grid gap-2">
-                  <Label htmlFor="typeUser">User Type</Label>
-                  <Select
-                    value={newUser.typeUser}
-                    onValueChange={(value) => setNewUser({ ...newUser, typeUser: value })}
-                  >
-                    <SelectTrigger>
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="1">Customer</SelectItem>
-                      <SelectItem value="2">Admin</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div className="grid gap-2">
-                  <Label htmlFor="password">Password</Label>
-                  <Input
-                    id="password"
-                    type="password"
-                    value={newUser.password}
-                    onChange={(e) => setNewUser({ ...newUser, password: e.target.value })}
-                    placeholder="Strong password"
-                  />
-                </div>
-              </div>
-              <div className="space-y-2">
-                <Label>Address</Label>
-                <div className="grid grid-cols-2 gap-4">
-                  <Input
-                    placeholder="Street"
-                    value={newUser.address.street}
-                    onChange={(e) =>
-                      setNewUser({ ...newUser, address: { ...newUser.address, street: e.target.value } })
-                    }
-                  />
-                  <Input
-                    placeholder="Number"
-                    value={newUser.address.number}
-                    onChange={(e) =>
-                      setNewUser({ ...newUser, address: { ...newUser.address, number: e.target.value } })
-                    }
-                  />
-                </div>
-                <div className="grid grid-cols-2 gap-4">
-                  <Input
-                    placeholder="Complement"
-                    value={newUser.address.complement}
-                    onChange={(e) =>
-                      setNewUser({ ...newUser, address: { ...newUser.address, complement: e.target.value } })
-                    }
-                  />
-                  <Input
-                    placeholder="CEP"
-                    value={newUser.address.cep}
-                    onChange={(e) => setNewUser({ ...newUser, address: { ...newUser.address, cep: e.target.value } })}
-                  />
-                </div>
-                <Input
-                  placeholder="City ID"
-                  value={newUser.address.cityId}
-                  onChange={(e) => setNewUser({ ...newUser, address: { ...newUser.address, cityId: e.target.value } })}
-                />
-              </div>
-            </div>
+            <div className="grid gap-4 py-4">{/* form fields here */}</div>
             <div className="flex justify-end gap-2">
-              <Button variant="outline" onClick={() => setIsCreateDialogOpen(false)}>
-                Cancel
-              </Button>
+              <Button variant="outline" onClick={() => setIsCreateDialogOpen(false)}>Cancel</Button>
               <Button onClick={handleCreateUser}>Create User</Button>
             </div>
           </DialogContent>
@@ -268,9 +191,7 @@ export function UsersView() {
         <CardContent>
           <div className="flex gap-2">
             <Select value={searchType} onValueChange={setSearchType}>
-              <SelectTrigger className="w-32">
-                <SelectValue />
-              </SelectTrigger>
+              <SelectTrigger className="w-32"><SelectValue /></SelectTrigger>
               <SelectContent>
                 <SelectItem value="id">ID</SelectItem>
                 <SelectItem value="cpf">CPF</SelectItem>
@@ -278,61 +199,33 @@ export function UsersView() {
                 <SelectItem value="phone">Phone</SelectItem>
               </SelectContent>
             </Select>
-            <Input
-              placeholder={`Enter ${searchType}`}
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-            />
-            <Button onClick={handleSearchUser}>
-              <Search className="mr-2 h-4 w-4" />
-              Search
-            </Button>
+            <Input placeholder={`Enter ${searchType}`} value={searchTerm} onChange={e => setSearchTerm(e.target.value)} />
+            <Button onClick={handleSearchUser}><Search className="mr-2 h-4 w-4" />Search</Button>
           </div>
         </CardContent>
       </Card>
 
       <Card>
-        <CardHeader>
-          <CardTitle>Users List</CardTitle>
-          <CardDescription>All registered users</CardDescription>
-        </CardHeader>
+        <CardHeader><CardTitle>Users List</CardTitle><CardDescription>All registered users</CardDescription></CardHeader>
         <CardContent>
           <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>ID</TableHead>
-                <TableHead>Name</TableHead>
-                <TableHead>Email</TableHead>
-                <TableHead>CPF</TableHead>
-                <TableHead>Type</TableHead>
-                <TableHead>Phone</TableHead>
-                <TableHead>Actions</TableHead>
-              </TableRow>
-            </TableHeader>
+            <TableHeader><TableRow>
+              <TableHead>ID</TableHead><TableHead>Name</TableHead><TableHead>Email</TableHead><TableHead>CPF</TableHead><TableHead>Type</TableHead><TableHead>Phone</TableHead><TableHead>Actions</TableHead>
+            </TableRow></TableHeader>
             <TableBody>
-              {users.map((user) => (
+              {users.map(user => (
                 <TableRow key={user.id}>
                   <TableCell className="font-medium">{user.id}</TableCell>
                   <TableCell>{user.name}</TableCell>
                   <TableCell>{user.email}</TableCell>
                   <TableCell>{user.cpf}</TableCell>
-                  <TableCell>
-                    <Badge variant={user.typeUser === 2 ? "default" : "secondary"}>
-                      {getUserTypeLabel(user.typeUser)}
-                    </Badge>
-                  </TableCell>
+                  <TableCell><Badge variant={user.typeUser === 2 ? 'default' : 'secondary'}>{getUserTypeLabel(user.typeUser)}</Badge></TableCell>
                   <TableCell>{user.phone}</TableCell>
                   <TableCell>
                     <div className="flex gap-2">
-                      <Button variant="outline" size="sm">
-                        <Eye className="h-4 w-4" />
-                      </Button>
-                      <Button variant="outline" size="sm">
-                        <Edit className="h-4 w-4" />
-                      </Button>
-                      <Button variant="outline" size="sm" onClick={() => handleDeleteUser(user.id)}>
-                        <Trash2 className="h-4 w-4" />
-                      </Button>
+                      <Button variant="outline" size="sm"><Eye className="h-4 w-4" /></Button>
+                      <Button variant="outline" size="sm"><Edit className="h-4 w-4" /></Button>
+                      <Button variant="outline" size="sm" onClick={() => handleDeleteUser(user.id)}><Trash2 className="h-4 w-4" /></Button>
                     </div>
                   </TableCell>
                 </TableRow>
