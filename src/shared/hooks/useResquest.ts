@@ -1,6 +1,8 @@
+import { useState } from 'react';
+
 import { homeScreenRoutesEnum } from '@/modules/home/routes';
 import { LoginRoutesEnum } from '@/modules/login/routes';
-import { useState } from 'react';
+
 import type { AuthType } from '../../modules/login/types/AuthType';
 import { ERROR_INVALID_PASSWORD } from '../constants/errosStatus';
 import { URL_AUTH } from '../constants/urls';
