@@ -1,6 +1,6 @@
 'use client';
 
-import { Check, Copy, QrCode, Search, ShoppingCart, User } from 'lucide-react';
+import { Check, Copy, QrCode } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { io } from 'socket.io-client';
 
@@ -44,48 +44,6 @@ export default function PaymentScreen() {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-teal-400 to-teal-500">
-      {/* Header */}
-      <header className="bg-teal-400 px-4 py-3">
-        <div className="max-w-7xl mx-auto flex items-center justify-between">
-          <div className="flex items-center space-x-8">
-            <div className="bg-orange-100 px-4 py-2 rounded-lg flex items-center space-x-2">
-              <ShoppingCart className="w-6 h-6 text-teal-600" />
-              <div>
-                <div className="font-bold text-teal-800">Mercato</div>
-                <div className="text-xs text-orange-600 font-semibold">ONLINE</div>
-              </div>
-            </div>
-            <nav className="hidden md:flex space-x-6 text-teal-800">
-              <a href="#" className="hover:text-teal-900">
-                Home
-              </a>
-              <a href="#" className="hover:text-teal-900">
-                Discover
-              </a>
-              <a href="#" className="hover:text-teal-900">
-                Blog
-              </a>
-              <a href="#" className="hover:text-teal-900">
-                About Us
-              </a>
-              <a href="#" className="hover:text-teal-900">
-                Contact
-              </a>
-              <a href="#" className="hover:text-teal-900">
-                Games
-              </a>
-              <a href="#" className="hover:text-teal-900">
-                Sell
-              </a>
-            </nav>
-          </div>
-          <div className="flex items-center space-x-4">
-            <Search className="w-5 h-5 text-teal-800" />
-            <User className="w-5 h-5 text-teal-800" />
-          </div>
-        </div>
-      </header>
-
       {/* Main Content */}
       <div className="bg-yellow-50 min-h-screen px-4 py-8">
         <div className="max-w-6xl mx-auto">
@@ -231,54 +189,6 @@ export default function PaymentScreen() {
           </div>
         </div>
       </div>
-
-      {/* Footer */}
-      <footer className="bg-blue-300 px-4 py-12">
-        <div className="max-w-6xl mx-auto">
-          <div className="grid md:grid-cols-4 gap-8">
-            <div>
-              <h3 className="font-bold text-gray-800 mb-4">Sweetdeli</h3>
-              <div className="space-y-2 text-sm text-gray-700">
-                <p>Contato</p>
-                <p>sac@mercatoonline.com</p>
-                <p>+55 81 92345-0986</p>
-                <p>123 Rua, Pernambuco, Brasil</p>
-              </div>
-            </div>
-
-            <div>
-              <h4 className="font-semibold text-gray-800 mb-4">Outros sites</h4>
-              <div className="space-y-2 text-sm text-gray-700">
-                <p>Desenvolvedores</p>
-                <p>Mercato Pay</p>
-                <p>Minha Página</p>
-              </div>
-            </div>
-
-            <div>
-              <h4 className="font-semibold text-gray-800 mb-4">Sobre o</h4>
-              <div className="space-y-2 text-sm text-gray-700">
-                <p>Mercato Online</p>
-                <p>Sustentabilidade</p>
-                <p>Tendências</p>
-                <p>Investor relations</p>
-              </div>
-            </div>
-
-            <div>
-              <h4 className="font-semibold text-gray-800 mb-4">Get the app</h4>
-              <div className="space-y-3">
-                <div className="bg-black text-white px-4 py-2 rounded-lg text-sm">
-                  📱 Download on the App Store
-                </div>
-                <div className="bg-black text-white px-4 py-2 rounded-lg text-sm">
-                  📱 GET IT ON Google Play
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </footer>
     </div>
   );
 }
