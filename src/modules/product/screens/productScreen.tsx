@@ -9,7 +9,7 @@ import {
   Plus,
   Search,
   ShoppingCart,
-  Star
+  Star,
 } from 'lucide-react';
 import { useState } from 'react';
 import { Link } from 'react-router';
@@ -19,6 +19,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { connectionAPIPost } from '@/shared/functions/connection/connectionAPI';
 
 export default function ProductScreen() {
   const [quantity, setQuantity] = useState(1);
@@ -26,6 +27,16 @@ export default function ProductScreen() {
 
   const incrementQuantity = () => setQuantity((prev) => prev + 1);
   const decrementQuantity = () => setQuantity((prev) => Math.max(1, prev - 1));
+
+  interface PixResponse {
+    point_of_interaction: {
+      transaction_data: {
+        qr_code: string;
+        qr_code_base64: string;
+      };
+    };
+    transaction_amount?: number;
+  }
 
   const StarRating = ({ rating, total }: { rating: number; total?: number }) => {
     return (
@@ -39,6 +50,40 @@ export default function ProductScreen() {
         {total && <span className="text-sm text-gray-600 ml-1">({total})</span>}
       </div>
     );
+  };
+
+  const handlerOrder = async () => {
+    try {
+      const res: PixResponse = await connectionAPIPost('http://localhost:3000/payment/pix');
+
+      console.log(res);
+
+      // Extrai os campos
+      const qrCodeString = res.point_of_interaction.transaction_data.qr_code;
+      const qrCodeBase64 = res.point_of_interaction.transaction_data.qr_code_base64;
+
+      // Aqui você precisa confirmar o nome do campo de preço:
+      const price = res.transaction_amount ?? null; // verifique se existe
+
+      // Chave aleatória (PIX geralmente embutida no qr_code, entre "01" e "5204"):
+      const pixKeyMatch = qrCodeString.match(/pix01\d{2}([a-z0-9-]+)/i);
+      const pixKey = pixKeyMatch ? pixKeyMatch[1] : null;
+
+      // Salva no localStorage do navegador
+      localStorage.setItem(
+        'pixData',
+        JSON.stringify({
+          price,
+          pixKey,
+          qrCodeString,
+          qrCodeBase64,
+        }),
+      );
+
+      console.log('PIX data saved:', { price, pixKey, qrCodeString });
+    } catch (err) {
+      console.error(err);
+    }
   };
 
   return (
@@ -124,7 +169,12 @@ export default function ProductScreen() {
             {/* Action Buttons */}
             <div className="flex gap-4">
               <Link to={'/payment'}>
-                <Button className="flex-1 bg-black text-white hover:bg-gray-800">Order Now</Button>
+                <Button
+                  className="flex-1 bg-black text-white hover:bg-gray-800"
+                  onClick={handlerOrder}
+                >
+                  Order Now
+                </Button>
               </Link>
               <Button variant="outline" className="flex-1 bg-transparent">
                 Add to Cart
