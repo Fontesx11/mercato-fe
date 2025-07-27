@@ -13,6 +13,7 @@ import {
   User,
 } from 'lucide-react';
 import { useState } from 'react';
+import { Link } from 'react-router';
 
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
@@ -166,7 +167,9 @@ export default function ProductScreen() {
 
             {/* Action Buttons */}
             <div className="flex gap-4">
-              <Button className="flex-1 bg-black text-white hover:bg-gray-800">Order Now</Button>
+              <Link to={'/payment'}>
+                <Button className="flex-1 bg-black text-white hover:bg-gray-800">Order Now</Button>
+              </Link>
               <Button variant="outline" className="flex-1 bg-transparent">
                 Add to Cart
               </Button>

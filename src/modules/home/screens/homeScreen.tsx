@@ -1,95 +1,96 @@
-import { Button } from "@/components/ui/button"
-import { Card, CardContent } from "@/components/ui/card"
-import { ShoppingCart, Star, User } from "lucide-react"
-import { Link } from "react-router"
+import { ShoppingCart, Star } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
+import { Button } from '@/components/ui/button';
+import { Card, CardContent } from '@/components/ui/card';
+import UserProfileDropdown from '@/components/UserProfileDropdown';
 interface Product {
-  id: number
-  name: string
-  price: string
-  originalPrice?: string
-  rating: number
-  image: string
+  id: number;
+  name: string;
+  price: string;
+  originalPrice?: string;
+  rating: number;
+  image: string;
 }
 
 const recommendedProducts: Product[] = [
   {
     id: 1,
-    name: "Produto Recomendado 1",
-    price: "R$ 99,90",
-    originalPrice: "R$ 149,90",
+    name: 'Produto Recomendado 1',
+    price: 'R$ 99,90',
+    originalPrice: 'R$ 149,90',
     rating: 4,
-    image: "/placeholder.svg?height=200&width=200",
+    image: '/placeholder.svg?height=200&width=200',
   },
   {
     id: 2,
-    name: "Produto Recomendado 2",
-    price: "R$ 79,90",
-    originalPrice: "R$ 119,90",
+    name: 'Produto Recomendado 2',
+    price: 'R$ 79,90',
+    originalPrice: 'R$ 119,90',
     rating: 5,
-    image: "/placeholder.svg?height=200&width=200",
+    image: '/placeholder.svg?height=200&width=200',
   },
   {
     id: 3,
-    name: "Produto Recomendado 3",
-    price: "R$ 129,90",
-    originalPrice: "R$ 179,90",
+    name: 'Produto Recomendado 3',
+    price: 'R$ 129,90',
+    originalPrice: 'R$ 179,90',
     rating: 4,
-    image: "/placeholder.svg?height=200&width=200",
+    image: '/placeholder.svg?height=200&width=200',
   },
   {
     id: 4,
-    name: "Produto Recomendado 4",
-    price: "R$ 89,90",
-    originalPrice: "R$ 139,90",
+    name: 'Produto Recomendado 4',
+    price: 'R$ 89,90',
+    originalPrice: 'R$ 139,90',
     rating: 5,
-    image: "/placeholder.svg?height=200&width=200",
+    image: '/placeholder.svg?height=200&width=200',
   },
-]
+];
 
 const bestSellerProducts: Product[] = [
   {
     id: 5,
-    name: "Best Seller 1",
-    price: "R$ 159,90",
-    originalPrice: "R$ 199,90",
+    name: 'Best Seller 1',
+    price: 'R$ 159,90',
+    originalPrice: 'R$ 199,90',
     rating: 5,
-    image: "/placeholder.svg?height=200&width=200",
+    image: '/placeholder.svg?height=200&width=200',
   },
   {
     id: 6,
-    name: "Best Seller 2",
-    price: "R$ 119,90",
-    originalPrice: "R$ 169,90",
+    name: 'Best Seller 2',
+    price: 'R$ 119,90',
+    originalPrice: 'R$ 169,90',
     rating: 4,
-    image: "/placeholder.svg?height=200&width=200",
+    image: '/placeholder.svg?height=200&width=200',
   },
   {
     id: 7,
-    name: "Best Seller 3",
-    price: "R$ 89,90",
-    originalPrice: "R$ 129,90",
+    name: 'Best Seller 3',
+    price: 'R$ 89,90',
+    originalPrice: 'R$ 129,90',
     rating: 5,
-    image: "/placeholder.svg?height=200&width=200",
+    image: '/placeholder.svg?height=200&width=200',
   },
   {
     id: 8,
-    name: "Best Seller 4",
-    price: "R$ 199,90",
-    originalPrice: "R$ 249,90",
+    name: 'Best Seller 4',
+    price: 'R$ 199,90',
+    originalPrice: 'R$ 249,90',
     rating: 4,
-    image: "/placeholder.svg?height=200&width=200",
+    image: '/placeholder.svg?height=200&width=200',
   },
-]
+];
 
 const allProducts: Product[] = Array.from({ length: 28 }, (_, i) => ({
   id: i + 9,
   name: `Produto ${i + 1}`,
-  price: `R$ ${(Math.random() * 200 + 50).toFixed(2).replace(".", ",")}`,
-  originalPrice: `R$ ${(Math.random() * 100 + 200).toFixed(2).replace(".", ",")}`,
+  price: `R$ ${(Math.random() * 200 + 50).toFixed(2).replace('.', ',')}`,
+  originalPrice: `R$ ${(Math.random() * 100 + 200).toFixed(2).replace('.', ',')}`,
   rating: Math.floor(Math.random() * 2) + 4,
-  image: "/placeholder.svg?height=200&width=200",
-}))
+  image: '/placeholder.svg?height=200&width=200',
+}));
 
 function ProductCard({ product }: { product: Product }) {
   return (
@@ -97,7 +98,7 @@ function ProductCard({ product }: { product: Product }) {
       <CardContent className="p-4">
         <div className="aspect-square mb-4 overflow-hidden rounded-lg bg-gray-100">
           <img
-            src={product.image || "/placeholder.svg"}
+            src={product.image || '/placeholder.svg'}
             alt={product.name}
             width={200}
             height={200}
@@ -109,23 +110,23 @@ function ProductCard({ product }: { product: Product }) {
           {Array.from({ length: 5 }).map((_, i) => (
             <Star
               key={i}
-              className={`w-3 h-3 ${i < product.rating ? "fill-yellow-400 text-yellow-400" : "text-gray-300"}`}
+              className={`w-3 h-3 ${i < product.rating ? 'fill-yellow-400 text-yellow-400' : 'text-gray-300'}`}
             />
           ))}
         </div>
         <div className="space-y-1 mb-3">
-          {product.originalPrice && <p className="text-xs text-gray-500 line-through">{product.originalPrice}</p>}
+          {product.originalPrice && (
+            <p className="text-xs text-gray-500 line-through">{product.originalPrice}</p>
+          )}
           <p className="font-bold text-lg text-green-600">{product.price}</p>
         </div>
         <Button size="sm" className="w-full bg-teal-600 hover:bg-teal-700">
           <ShoppingCart className="w-4 h-4 mr-2" />
-          <Link to={"/product"}>
-            Comprar
-          </Link>
+          <Link to={'/product'}>Compraraa</Link>
         </Button>
       </CardContent>
     </Card>
-  )
+  );
 }
 
 export default function Component() {
@@ -166,10 +167,10 @@ export default function Component() {
             </nav>
           </div>
           <div className="flex items-center gap-4">
-            <User className="w-5 h-5" />
             <div className="w-6 h-6 bg-white rounded-full flex items-center justify-center">
               <span className="text-teal-400 text-xs font-bold">?</span>
             </div>
+            <UserProfileDropdown />
           </div>
         </div>
       </header>
@@ -327,5 +328,5 @@ export default function Component() {
         </div>
       </footer>
     </div>
-  )
+  );
 }

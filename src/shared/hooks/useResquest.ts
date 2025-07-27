@@ -1,11 +1,12 @@
 import { useState } from 'react';
 
-
 import { homeScreenRoutesEnum } from '@/modules/home/routes';
+import { LoginRoutesEnum } from '@/modules/login/routes';
+
 import type { AuthType } from '../../modules/login/types/AuthType';
 import { ERROR_INVALID_PASSWORD } from '../constants/errosStatus';
 import { URL_AUTH } from '../constants/urls';
-import { setAuthrizationToken } from '../functions/connection/auth';
+import { setAuthrizationToken, unsetAuthorizationToken } from '../functions/connection/auth';
 import ConnectionAPI, {
   connectionAPIPost,
   type MethodType,
@@ -18,7 +19,6 @@ export const useRequest = () => {
 
   const authRequest = async (body: unknown, navigate: (path: string) => void): Promise<void> => {
     setLoading(true);
-    navigate(homeScreenRoutesEnum.HOME);
     await connectionAPIPost<AuthType>(URL_AUTH, body)
       .then((res) => {
         setUser(res.user);
@@ -31,6 +31,15 @@ export const useRequest = () => {
         return undefined;
       });
 
+    setLoading(false);
+  };
+
+  const logoutRequest = (navigate: (path: string) => void): void => {
+    setLoading(true);
+    unsetAuthorizationToken();
+    setUser(undefined);
+    setNotification('Você foi desconectado com sucesso.', 'success');
+    navigate(LoginRoutesEnum.LOGIN);
     setLoading(false);
   };
 
@@ -61,5 +70,6 @@ export const useRequest = () => {
     loading,
     request,
     authRequest,
+    logoutRequest,
   };
 };

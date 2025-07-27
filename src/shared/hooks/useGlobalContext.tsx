@@ -49,7 +49,7 @@ export const useGlobalContext = () => {
       },
     });
   };
-  const setUser = (user: UserType) => {
+  const setUser = (user: UserType | undefined) => {
     setGlobalData({
       ...globalData,
       user,
