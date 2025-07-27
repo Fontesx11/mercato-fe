@@ -19,7 +19,6 @@ export const useRequest = () => {
 
   const authRequest = async (body: unknown, navigate: (path: string) => void): Promise<void> => {
     setLoading(true);
-    navigate(homeScreenRoutesEnum.HOME);
     await connectionAPIPost<AuthType>(URL_AUTH, body)
       .then((res) => {
         setUser(res.user);

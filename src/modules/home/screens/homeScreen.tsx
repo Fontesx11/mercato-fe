@@ -1,5 +1,5 @@
 import { ShoppingCart, Star } from 'lucide-react';
-import { Link } from 'react-router';
+import { Link } from 'react-router-dom';
 
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
@@ -122,7 +122,7 @@ function ProductCard({ product }: { product: Product }) {
         </div>
         <Button size="sm" className="w-full bg-teal-600 hover:bg-teal-700">
           <ShoppingCart className="w-4 h-4 mr-2" />
-          <Link to={'/product'}>Comprar</Link>
+          <Link to={'/product'}>Compraraa</Link>
         </Button>
       </CardContent>
     </Card>
