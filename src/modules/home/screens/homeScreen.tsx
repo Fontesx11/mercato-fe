@@ -121,7 +121,7 @@ function ProductCard({ product }: { product: Product }) {
         </div>
         <Button size="sm" className="w-full bg-teal-600 hover:bg-teal-700">
           <ShoppingCart className="w-4 h-4 mr-2" />
-          <Link to={'/product'}>Compraraa</Link>
+          <Link to={'/product'}>Comprar</Link>
         </Button>
       </CardContent>
     </Card>
