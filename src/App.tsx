@@ -3,6 +3,7 @@ import { createBrowserRouter, type RouteObject, RouterProvider } from 'react-rou
 
 import { MainLayout } from './components/layout/MainLayout';
 import { adminScreenRoutes } from './modules/admin/routes';
+import { cartRoutes } from './modules/cart/routes';
 import { homeScreenRoutes } from './modules/home/routes';
 import { loginRoutes } from './modules/login/routes';
 import { paymentRoutes } from './modules/payment/routes';
@@ -19,6 +20,7 @@ const routesWithLayout: RouteObject[] = [
   ...homeScreenRoutes,
   ...productScreenRoutes,
   ...paymentRoutes,
+  ...cartRoutes,
   ...salesRoutes,
 ];
 
@@ -30,6 +32,7 @@ const router = createBrowserRouter([
 
   // Rota de Layout: envolve as outras rotas
   {
+    // loader: verifyLoggedIn,
     //loader: verifyLoggedIn,
     element: <MainLayout />,
     children: routesWithLayout,
