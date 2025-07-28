@@ -1,19 +1,6 @@
 'use client';
 
-import {
-  Award,
-  CreditCard,
-  Facebook,
-  Gift,
-  Instagram,
-  Linkedin,
-  Package,
-  Search,
-  Shield,
-  ShoppingCart,
-  Twitter,
-  User,
-} from 'lucide-react';
+import { Award, CreditCard, Gift, Package, Shield, User } from 'lucide-react';
 import { useState } from 'react';
 
 import { Button } from '@/components/ui/button';
@@ -80,32 +67,6 @@ export default function PersonalInfoPage() {
   return (
     <div className="bg-yellow-100 min-h-screen">
       {/* Header Section */}
-      <header className="bg-teal-500 text-white">
-        <div className="container mx-auto px-4 flex items-center justify-between py-3">
-          {/* Logo */}
-          <div className="bg-yellow-400 text-black px-3 py-2 rounded font-bold text-sm">
-            MERCADO
-            <br />
-            ONLINE
-          </div>
-
-          {/* Navigation */}
-          <nav className="hidden md:flex items-center space-x-6">
-            {navigationItems.map((item) => (
-              <a key={item} href="#" className="hover:text-yellow-300 transition-colors">
-                {item}
-              </a>
-            ))}
-          </nav>
-
-          {/* Header Icons */}
-          <div className="flex items-center space-x-4">
-            <Search className="w-5 h-5 cursor-pointer hover:text-yellow-300" />
-            <User className="w-5 h-5 cursor-pointer hover:text-yellow-300" />
-            <ShoppingCart className="w-5 h-5 cursor-pointer hover:text-yellow-300" />
-          </div>
-        </div>
-      </header>
 
       {/* Main Content Section */}
       <main className="container mx-auto px-4 py-8 flex gap-6">
@@ -203,28 +164,6 @@ export default function PersonalInfoPage() {
       </main>
 
       {/* Footer Section */}
-      <footer className="bg-slate-400 text-white mt-16 w-full">
-        <div className="container mx-auto px-4 py-12 grid grid-cols-1 md:grid-cols-4 gap-8">
-          {footerSections.map((section, index) => (
-            <div key={index}>
-              <h3 className="text-lg font-semibold mb-4">{section.title}</h3>
-              <div className="space-y-2 text-sm">
-                {section.items.map((item, itemIndex) => (
-                  <p key={itemIndex}>{item}</p>
-                ))}
-              </div>
-              {index === 0 && (
-                <div className="flex space-x-3 mt-4">
-                  <Facebook className="w-5 h-5 cursor-pointer hover:text-yellow-300" />
-                  <Instagram className="w-5 h-5 cursor-pointer hover:text-yellow-300" />
-                  <Twitter className="w-5 h-5 cursor-pointer hover:text-yellow-300" />
-                  <Linkedin className="w-5 h-5 cursor-pointer hover:text-yellow-300" />
-                </div>
-              )}
-            </div>
-          ))}
-        </div>
-      </footer>
     </div>
   );
 }

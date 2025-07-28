@@ -21,6 +21,7 @@ const routesWithLayout: RouteObject[] = [
   ...productScreenRoutes,
   ...paymentRoutes,
   ...cartRoutes,
+  ...personalInfoScreenRoutes,
 ];
 
 const router = createBrowserRouter([
@@ -28,11 +29,9 @@ const router = createBrowserRouter([
   ...loginRoutes,
   ...registerRoutes,
   ...adminScreenRoutes,
-  ...personalInfoScreenRoutes,
 
   // Rota de Layout: envolve as outras rotas
   {
-    // loader: verifyLoggedIn,
     //loader: verifyLoggedIn,
     element: <MainLayout />,
     children: routesWithLayout,
