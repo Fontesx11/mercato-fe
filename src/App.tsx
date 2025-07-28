@@ -8,6 +8,7 @@ import { loginRoutes } from './modules/login/routes';
 import { paymentRoutes } from './modules/payment/routes';
 import { productScreenRoutes } from './modules/product/routes';
 import { registerRoutes } from './modules/register/routes';
+import { salesRoutes } from './modules/sales/routes';
 import { URL_USER } from './shared/constants/urls';
 import { MethodsEnum } from './shared/enums/methods.enum';
 import { useGlobalContext } from './shared/hooks/useGlobalContext';
@@ -18,6 +19,7 @@ const routesWithLayout: RouteObject[] = [
   ...homeScreenRoutes,
   ...productScreenRoutes,
   ...paymentRoutes,
+  ...salesRoutes,
 ];
 
 const router = createBrowserRouter([

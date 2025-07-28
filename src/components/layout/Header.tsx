@@ -16,7 +16,7 @@ export default function Header() {
             </div>
           </div>
           <nav className="hidden md:flex space-x-6 text-teal-800">
-            <Link to="/" className="hover:text-teal-900">
+            <Link to="/home" className="hover:text-teal-900">
               Home
             </Link>
             <Link to="/" className="hover:text-teal-900">
@@ -34,8 +34,8 @@ export default function Header() {
             <Link to="/" className="hover:text-teal-900">
               Games
             </Link>
-            <Link to="/" className="hover:text-teal-900">
-              Sell
+            <Link to="/sales" className="hover:text-teal-900">
+              <b>Sell</b>
             </Link>
           </nav>
         </div>
