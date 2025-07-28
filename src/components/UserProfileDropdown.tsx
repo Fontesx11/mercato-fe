@@ -41,7 +41,9 @@ export default function UserProfileDropdown() {
             className="p-3 cursor-pointer hover:bg-accent/80 transition-colors"
           >
             <User className="mr-3 h-5 w-5 text-muted-foreground" />
-            <span className="font-bold text-sm text-muted-foreground">Personal Info</span>
+            <span className="font-bold text-sm text-muted-foreground cursor-pointer">
+              Personal Info
+            </span>
           </Link>
         </DropdownMenuItem>
 

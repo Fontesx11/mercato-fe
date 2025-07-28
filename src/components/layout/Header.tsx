@@ -1,7 +1,9 @@
-import { Badge } from '@/components/ui/badge';
-import Logo from '@/logo.svg?react';
 import { Search, ShoppingCart } from 'lucide-react';
 import { Link } from 'react-router-dom';
+
+import { Badge } from '@/components/ui/badge';
+import Logo from '@/logo.svg?react';
+
 import UserProfileDropdown from '../UserProfileDropdown';
 
 export default function Header() {
@@ -50,7 +52,9 @@ export default function Header() {
               </Badge>
             </Link>
           </div>
-          <UserProfileDropdown />
+          <div className="cursor-pointer">
+            <UserProfileDropdown />
+          </div>
         </div>
       </div>
     </header>
