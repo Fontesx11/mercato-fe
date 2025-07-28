@@ -19,7 +19,6 @@ import { useEffect, useState } from "react"
 
 const API_BASE = "http://localhost:4001/users"
 
-// TypeScript interfaces
 type Address = {
   street: string
   number: number
@@ -74,7 +73,6 @@ export function UsersView() {
     address: { street: "", number: "", complement: "", cep: "", cityId: "" },
   })
 
-  // Fetch all users on mount
   useEffect(() => {
     async function loadUsers(): Promise<void> {
       try {
@@ -89,7 +87,6 @@ export function UsersView() {
     loadUsers()
   }, [])
 
-  // Create new user
   const handleCreateUser = async (): Promise<void> => {
     try {
       const payload = {
@@ -130,10 +127,9 @@ export function UsersView() {
     }
   }
 
-  // Delete user
   const handleDeleteUser = async (userId: number): Promise<void> => {
     try {
-      const res = await fetch(`${API_BASE}/${userId}`, { method: 'DELETE' })
+      const res = await fetch(`\${API_BASE}/\${userId}`, { method: 'DELETE' })
       if (!res.ok) throw new Error('Failed to delete user')
       setUsers(prev => prev.filter(u => u.id !== userId))
     } catch (error) {
@@ -141,11 +137,10 @@ export function UsersView() {
     }
   }
 
-  // Search users
   const handleSearchUser = async (): Promise<void> => {
     if (!searchTerm) return
     try {
-      const res = await fetch(`${API_BASE}/${searchType}/${encodeURIComponent(searchTerm)}`)
+      const res = await fetch(`\${API_BASE}/\${searchType}/\${encodeURIComponent(searchTerm)}`)
       if (!res.ok) {
         console.warn('User not found')
         return
@@ -174,7 +169,87 @@ export function UsersView() {
               <DialogTitle>Create New User</DialogTitle>
               <DialogDescription>Add a new user to the system</DialogDescription>
             </DialogHeader>
-            <div className="grid gap-4 py-4">{/* form fields here */}</div>
+            <div className="grid gap-4 py-4">
+              <Input
+                placeholder="Name"
+                value={newUser.name}
+                onChange={e => setNewUser({ ...newUser, name: e.target.value })}
+              />
+              <Input
+                placeholder="Email"
+                type="email"
+                value={newUser.email}
+                onChange={e => setNewUser({ ...newUser, email: e.target.value })}
+              />
+              <Input
+                placeholder="CPF"
+                value={newUser.cpf}
+                onChange={e => setNewUser({ ...newUser, cpf: e.target.value })}
+              />
+              <Select
+                value={newUser.typeUser}
+                onValueChange={val => setNewUser({ ...newUser, typeUser: val })}
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="Type" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="1">Customer</SelectItem>
+                  <SelectItem value="2">Admin</SelectItem>
+                </SelectContent>
+              </Select>
+              <Input
+                placeholder="Phone"
+                value={newUser.phone}
+                onChange={e => setNewUser({ ...newUser, phone: e.target.value })}
+              />
+              <Input
+                placeholder="Password"
+                type="password"
+                value={newUser.password}
+                onChange={e => setNewUser({ ...newUser, password: e.target.value })}
+              />
+              <Input
+                placeholder="Street"
+                value={newUser.address.street}
+                onChange={e => setNewUser({
+                  ...newUser,
+                  address: { ...newUser.address, street: e.target.value }
+                })}
+              />
+              <Input
+                placeholder="Number"
+                value={newUser.address.number}
+                onChange={e => setNewUser({
+                  ...newUser,
+                  address: { ...newUser.address, number: e.target.value }
+                })}
+              />
+              <Input
+                placeholder="Complement"
+                value={newUser.address.complement}
+                onChange={e => setNewUser({
+                  ...newUser,
+                  address: { ...newUser.address, complement: e.target.value }
+                })}
+              />
+              <Input
+                placeholder="CEP"
+                value={newUser.address.cep}
+                onChange={e => setNewUser({
+                  ...newUser,
+                  address: { ...newUser.address, cep: e.target.value }
+                })}
+              />
+              <Input
+                placeholder="City ID"
+                value={newUser.address.cityId}
+                onChange={e => setNewUser({
+                  ...newUser,
+                  address: { ...newUser.address, cityId: e.target.value }
+                })}
+              />
+            </div>
             <div className="flex justify-end gap-2">
               <Button variant="outline" onClick={() => setIsCreateDialogOpen(false)}>Cancel</Button>
               <Button onClick={handleCreateUser}>Create User</Button>

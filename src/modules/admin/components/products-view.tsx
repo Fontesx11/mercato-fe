@@ -17,7 +17,6 @@ import { useEffect, useState } from "react"
 
 const API_BASE = "http://localhost:4001/products"
 
-// TypeScript interfaces
 type Product = {
   id: number
   name: string
@@ -54,10 +53,17 @@ export function ProductsView() {
   const [priceRange, setPriceRange] = useState<PriceRange>({ price1: "", price2: "" })
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState<boolean>(false)
   const [newProduct, setNewProduct] = useState<NewProductPayload>({
-    name: "", price: "", image: "", brand: "", description: "", storeId: "", batch: "", validity: "", categoryId: ""
+    name: "",
+    price: "",
+    image: "",
+    brand: "",
+    description: "",
+    storeId: "",
+    batch: "",
+    validity: "",
+    categoryId: ""
   })
 
-  // Fetch all products on mount
   useEffect(() => {
     async function loadProducts(): Promise<void> {
       try {
@@ -148,26 +154,72 @@ export function ProductsView() {
           <h2 className="text-3xl font-bold tracking-tight">Products Management</h2>
           <p className="text-muted-foreground">Manage your product catalog and inventory</p>
         </div>
-        <div className="flex gap-2">
-          <Dialog open={isCreateDialogOpen} onOpenChange={setIsCreateDialogOpen}>
-            <DialogTrigger asChild>
-              <Button><Plus className="mr-2 h-4 w-4" />Create Product</Button>
-            </DialogTrigger>
-            <DialogContent className="sm:max-w-[600px] max-h-[80vh] overflow-y-auto">
-              <DialogHeader>
-                <DialogTitle>Create New Product</DialogTitle>
-                <DialogDescription>Add a new product to your catalog</DialogDescription>
-              </DialogHeader>
-              <div className="grid gap-4 py-4">
-                {/* form fields as before */}
-              </div>
-              <div className="flex justify-end gap-2">
-                <Button variant="outline" onClick={() => setIsCreateDialogOpen(false)}>Cancel</Button>
-                <Button onClick={handleCreateProduct}>Create Product</Button>
-              </div>
-            </DialogContent>
-          </Dialog>
-        </div>
+        <Dialog open={isCreateDialogOpen} onOpenChange={setIsCreateDialogOpen}>
+          <DialogTrigger asChild>
+            <Button><Plus className="mr-2 h-4 w-4" />Create Product</Button>
+          </DialogTrigger>
+          <DialogContent className="sm:max-w-[600px] max-h-[80vh] overflow-y-auto">
+            <DialogHeader>
+              <DialogTitle>Create New Product</DialogTitle>
+              <DialogDescription>Add a new product to your catalog</DialogDescription>
+            </DialogHeader>
+            <div className="grid gap-4 py-4">
+              <Input
+                placeholder="Name"
+                value={newProduct.name}
+                onChange={e => setNewProduct({ ...newProduct, name: e.target.value })}
+              />
+              <Input
+                placeholder="Price"
+                type="number"
+                step="0.01"
+                value={newProduct.price}
+                onChange={e => setNewProduct({ ...newProduct, price: e.target.value })}
+              />
+              <Input
+                placeholder="Image URL"
+                value={newProduct.image}
+                onChange={e => setNewProduct({ ...newProduct, image: e.target.value })}
+              />
+              <Input
+                placeholder="Brand"
+                value={newProduct.brand}
+                onChange={e => setNewProduct({ ...newProduct, brand: e.target.value })}
+              />
+              <Input
+                placeholder="Description"
+                value={newProduct.description}
+                onChange={e => setNewProduct({ ...newProduct, description: e.target.value })}
+              />
+              <Input
+                placeholder="Store ID"
+                type="number"
+                value={newProduct.storeId}
+                onChange={e => setNewProduct({ ...newProduct, storeId: e.target.value })}
+              />
+              <Input
+                placeholder="Batch"
+                value={newProduct.batch}
+                onChange={e => setNewProduct({ ...newProduct, batch: e.target.value })}
+              />
+              <Input
+                placeholder="Validity"
+                value={newProduct.validity}
+                onChange={e => setNewProduct({ ...newProduct, validity: e.target.value })}
+              />
+              <Input
+                placeholder="Category ID"
+                type="number"
+                value={newProduct.categoryId}
+                onChange={e => setNewProduct({ ...newProduct, categoryId: e.target.value })}
+              />
+            </div>
+            <div className="flex justify-end gap-2">
+              <Button variant="outline" onClick={() => setIsCreateDialogOpen(false)}>Cancel</Button>
+              <Button onClick={handleCreateProduct}>Create Product</Button>
+            </div>
+          </DialogContent>
+        </Dialog>
       </div>
 
       <div className="grid gap-4 md:grid-cols-2">

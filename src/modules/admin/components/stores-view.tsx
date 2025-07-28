@@ -19,7 +19,7 @@ import { useEffect, useState } from "react"
 const API_BASE = "http://localhost:4001/stores"
 
 // TypeScript interfaces
-type Address = {
+interface Address {
   street: string
   number: number
   complement: string
@@ -27,7 +27,7 @@ type Address = {
   cityId: number
 }
 
-type Store = {
+interface Store {
   id: number
   name: string
   cnpj: string
@@ -40,7 +40,7 @@ type Store = {
   address: Address
 }
 
-type NewStorePayload = {
+interface NewStorePayload {
   name: string
   cnpj: string
   email: string
@@ -90,7 +90,12 @@ export function StoresView() {
   const handleCreateStore = async (): Promise<void> => {
     try {
       const payload = {
-        ...newStore,
+        name: newStore.name,
+        cnpj: newStore.cnpj,
+        email: newStore.email,
+        description: newStore.description,
+        phone: newStore.phone,
+        logo_url: newStore.logo_url,
         userId: parseInt(newStore.userId, 10),
         address: {
           street: newStore.address.street,
@@ -167,7 +172,73 @@ export function StoresView() {
                 <DialogTitle>Create New Store</DialogTitle>
                 <DialogDescription>Add a new partner store to the platform</DialogDescription>
               </DialogHeader>
-              <div className="grid gap-4 py-4">{/* form fields */}</div>
+              <div className="grid grid-cols-1 gap-4 py-4">
+                <Input
+                  placeholder="Name"
+                  value={newStore.name}
+                  onChange={e => setNewStore(prev => ({ ...prev, name: e.target.value }))}
+                />
+                <Input
+                  placeholder="CNPJ"
+                  value={newStore.cnpj}
+                  onChange={e => setNewStore(prev => ({ ...prev, cnpj: e.target.value }))}
+                />
+                <Input
+                  placeholder="Email"
+                  type="email"
+                  value={newStore.email}
+                  onChange={e => setNewStore(prev => ({ ...prev, email: e.target.value }))}
+                />
+                <Input
+                  placeholder="Description"
+                  value={newStore.description}
+                  onChange={e => setNewStore(prev => ({ ...prev, description: e.target.value }))}
+                />
+                <Input
+                  placeholder="Phone"
+                  value={newStore.phone}
+                  onChange={e => setNewStore(prev => ({ ...prev, phone: e.target.value }))}
+                />
+                <Input
+                  placeholder="Logo URL"
+                  value={newStore.logo_url}
+                  onChange={e => setNewStore(prev => ({ ...prev, logo_url: e.target.value }))}
+                />
+                <Input
+                  placeholder="User ID"
+                  type="number"
+                  value={newStore.userId}
+                  onChange={e => setNewStore(prev => ({ ...prev, userId: e.target.value }))}
+                />
+                {/* Address fields */}
+                <Input
+                  placeholder="Street"
+                  value={newStore.address.street}
+                  onChange={e => setNewStore(prev => ({ ...prev, address: { ...prev.address, street: e.target.value } }))}
+                />
+                <Input
+                  placeholder="Number"
+                  type="number"
+                  value={newStore.address.number}
+                  onChange={e => setNewStore(prev => ({ ...prev, address: { ...prev.address, number: e.target.value } }))}
+                />
+                <Input
+                  placeholder="Complement"
+                  value={newStore.address.complement}
+                  onChange={e => setNewStore(prev => ({ ...prev, address: { ...prev.address, complement: e.target.value } }))}
+                />
+                <Input
+                  placeholder="CEP"
+                  value={newStore.address.cep}
+                  onChange={e => setNewStore(prev => ({ ...prev, address: { ...prev.address, cep: e.target.value } }))}
+                />
+                <Input
+                  placeholder="City ID"
+                  type="number"
+                  value={newStore.address.cityId}
+                  onChange={e => setNewStore(prev => ({ ...prev, address: { ...prev.address, cityId: e.target.value } }))}
+                />
+              </div>
               <div className="flex justify-end gap-2">
                 <Button variant="outline" onClick={() => setIsCreateDialogOpen(false)}>Cancel</Button>
                 <Button onClick={handleCreateStore}>Create Store</Button>

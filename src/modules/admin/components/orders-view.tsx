@@ -14,20 +14,19 @@ import {
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
-import { Textarea } from "@/components/ui/textarea"
 import { Eye, Plus, Search, Trash2 } from "lucide-react"
 import { useEffect, useState } from "react"
 
 const API_BASE = "http://localhost:4001/orders"
 
-// TypeScript interfaces
-type OrderProduct = {
+interface OrderProduct {
   productId: number
   amount: number
-  productName?: string
+  price: number
+  total: number
 }
 
-type Order = {
+interface Order {
   id: number
   userId: number
   addressId: number
@@ -38,27 +37,34 @@ type Order = {
   orderProducts: OrderProduct[]
 }
 
-type NewOrderPayload = {
-  userId: string
-  addressId: string
-  paymentId: string
-  orderProducts: string
+interface NewOrderPayload {
+  userId: number | ""
+  paymentId: number | ""
+  orderProducts: { productId: number; amount: number }[]
 }
 
 export function OrdersView() {
   const [orders, setOrders] = useState<Order[]>([])
   const [searchId, setSearchId] = useState<string>("")
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState<boolean>(false)
-  const [newOrder, setNewOrder] = useState<NewOrderPayload>({ userId: "", addressId: "", paymentId: "", orderProducts: "" })
+  const [newOrder, setNewOrder] = useState<NewOrderPayload>({
+    userId: "",
+    paymentId: "",
+    orderProducts: [{ productId: 0, amount: 1 }],
+  })
 
-  // Fetch all orders on mount
+  // Load all orders and compute total from backend-provided orderProducts.total
   useEffect(() => {
-    async function loadOrders(): Promise<void> {
+    async function loadOrders() {
       try {
         const res = await fetch(API_BASE)
         if (!res.ok) throw new Error('Failed to fetch orders')
         const data: Order[] = await res.json()
-        setOrders(data)
+        const enriched = data.map(order => ({
+          ...order,
+          total: order.orderProducts.reduce((sum, item) => sum + (item.total ?? 0), 0),
+        }))
+        setOrders(enriched)
       } catch (error) {
         console.error('Error loading orders:', error)
       }
@@ -66,13 +72,35 @@ export function OrdersView() {
     loadOrders()
   }, [])
 
-  const handleCreateOrder = async (): Promise<void> => {
+  const handleAddProductRow = () => {
+    setNewOrder(prev => ({
+      ...prev,
+      orderProducts: [...prev.orderProducts, { productId: 0, amount: 1 }]
+    }))
+  }
+
+  const handleRemoveProductRow = (index: number) => {
+    setNewOrder(prev => ({
+      ...prev,
+      orderProducts: prev.orderProducts.filter((_, i) => i !== index)
+    }))
+  }
+
+  const handleProductChange = (index: number, field: 'productId' | 'amount', value: number) => {
+    setNewOrder(prev => {
+      const products = [...prev.orderProducts]
+      products[index] = { ...products[index], [field]: value }
+      return { ...prev, orderProducts: products }
+    })
+  }
+
+  const handleCreateOrder = async () => {
     try {
       const payload = {
-        userId: parseInt(newOrder.userId, 10),
-        addressId: parseInt(newOrder.addressId, 10),
-        paymentId: parseInt(newOrder.paymentId, 10),
-        orderProducts: JSON.parse(newOrder.orderProducts) as Omit<OrderProduct, 'productName'>[],
+        userId: Number(newOrder.userId),
+        addressId: Number(newOrder.userId),
+        paymentId: Number(newOrder.paymentId),
+        orderProducts: newOrder.orderProducts,
       }
       const res = await fetch(API_BASE, {
         method: 'POST',
@@ -81,25 +109,27 @@ export function OrdersView() {
       })
       if (!res.ok) throw new Error('Failed to create order')
       const created: Order = await res.json()
-      setOrders(prev => [...prev, created])
+      // compute total from created.orderProducts.total
+      const total = created.orderProducts.reduce((sum, item) => sum + (item.total ?? 0), 0)
+      setOrders(prev => [...prev, { ...created, total }])
       setIsCreateDialogOpen(false)
-      setNewOrder({ userId: "", addressId: "", paymentId: "", orderProducts: "" })
+      setNewOrder({ userId: "", paymentId: "", orderProducts: [{ productId: 0, amount: 1 }] })
     } catch (error) {
-      console.error("Error creating order:", error)
+      console.error('Error creating order:', error)
     }
   }
 
-  const handleDeleteOrder = async (orderId: number): Promise<void> => {
+  const handleDeleteOrder = async (orderId: number) => {
     try {
       const res = await fetch(`${API_BASE}/${orderId}`, { method: 'DELETE' })
       if (!res.ok) throw new Error('Failed to delete order')
       setOrders(prev => prev.filter(o => o.id !== orderId))
     } catch (error) {
-      console.error("Error deleting order:", error)
+      console.error('Error deleting order:', error)
     }
   }
 
-  const handleSearchOrder = async (): Promise<void> => {
+  const handleSearchOrder = async () => {
     if (!searchId) return
     try {
       const res = await fetch(`${API_BASE}/${searchId}`)
@@ -108,9 +138,10 @@ export function OrdersView() {
         return
       }
       const found: Order = await res.json()
-      setOrders([found])
+      const total = found.orderProducts.reduce((sum, item) => sum + (item.total ?? 0), 0)
+      setOrders([{ ...found, total }])
     } catch (error) {
-      console.error("Error searching order:", error)
+      console.error('Error searching order:', error)
     }
   }
 
@@ -129,24 +160,35 @@ export function OrdersView() {
             <DialogContent className="sm:max-w-[425px]">
               <DialogHeader>
                 <DialogTitle>Create New Order</DialogTitle>
-                <DialogDescription>Create a new order for a customer</DialogDescription>
+                <DialogDescription>Create a new order for a customer (address auto by user)</DialogDescription>
               </DialogHeader>
               <div className="grid gap-4 py-4">
                 <div className="grid gap-2">
                   <Label htmlFor="userId">User ID</Label>
-                  <Input id="userId" value={newOrder.userId} onChange={e => setNewOrder({ ...newOrder, userId: e.target.value })} placeholder="1" />
-                </div>
-                <div className="grid gap-2">
-                  <Label htmlFor="addressId">Address ID</Label>
-                  <Input id="addressId" value={newOrder.addressId} onChange={e => setNewOrder({ ...newOrder, addressId: e.target.value })} placeholder="1" />
+                  <Input id="userId" type="number" value={newOrder.userId} onChange={e => setNewOrder({ ...newOrder, userId: Number(e.target.value) })} placeholder="1" />
                 </div>
                 <div className="grid gap-2">
                   <Label htmlFor="paymentId">Payment ID</Label>
-                  <Input id="paymentId" value={newOrder.paymentId} onChange={e => setNewOrder({ ...newOrder, paymentId: e.target.value })} placeholder="1" />
+                  <Input id="paymentId" type="number" value={newOrder.paymentId} onChange={e => setNewOrder({ ...newOrder, paymentId: Number(e.target.value) })} placeholder="1" />
                 </div>
                 <div className="grid gap-2">
-                  <Label htmlFor="orderProducts">Order Products (JSON)</Label>
-                  <Textarea id="orderProducts" value={newOrder.orderProducts} onChange={e => setNewOrder({ ...newOrder, orderProducts: e.target.value })} placeholder='[{"productId":1,"amount":2}]' rows={4} />
+                  <Label>Order Products</Label>
+                  {newOrder.orderProducts.map((prod, idx) => (
+                    <div key={idx} className="grid grid-cols-2 gap-2">
+                      <div className="grid gap-1">
+                        <Label>Product ID</Label>
+                        <Input type="number" min={1} placeholder="ID" value={prod.productId} onChange={e => handleProductChange(idx, 'productId', Number(e.target.value))} />
+                      </div>
+                      <div className="grid gap-1">
+                        <Label>Quantity</Label>
+                        <Input type="number" min={1} placeholder="Qty" value={prod.amount} onChange={e => handleProductChange(idx, 'amount', Number(e.target.value))} />
+                      </div>
+                      {newOrder.orderProducts.length > 1 && (
+                        <Button variant="outline" size="sm" className="col-span-2" onClick={() => handleRemoveProductRow(idx)}>Remove this product</Button>
+                      )}
+                    </div>
+                  ))}
+                  <Button variant="ghost" size="sm" className="mt-2" onClick={handleAddProductRow}>Add Product</Button>
                 </div>
               </div>
               <div className="flex justify-end gap-2">
@@ -181,7 +223,7 @@ export function OrdersView() {
                   <TableCell className="font-medium">#{order.id}</TableCell>
                   <TableCell>{order.userId}</TableCell>
                   <TableCell><Badge variant={order.status === 'Completed' ? 'default' : 'secondary'}>{order.status}</Badge></TableCell>
-                  <TableCell>${order.total.toFixed(2)}</TableCell>
+                  <TableCell>${(order.total ?? 0).toFixed(2)}</TableCell>
                   <TableCell>{new Date(order.createdAt).toLocaleDateString()}</TableCell>
                   <TableCell>
                     <div className="flex gap-2">
