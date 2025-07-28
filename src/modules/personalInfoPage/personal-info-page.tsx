@@ -1,60 +1,81 @@
-"use client"
+'use client';
 
-import { useState } from "react"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Card, CardContent } from "@/components/ui/card"
 import {
-  User,
-  Shield,
-  CreditCard,
-  Gift,
   Award,
+  CreditCard,
+  Facebook,
+  Gift,
+  Instagram,
+  Linkedin,
   Package,
   Search,
+  Shield,
   ShoppingCart,
-  Facebook,
-  Instagram,
   Twitter,
-  Linkedin,
-} from "lucide-react"
+  User,
+} from 'lucide-react';
+import { useState } from 'react';
+
+import { Button } from '@/components/ui/button';
+import { Card, CardContent } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 
 export default function PersonalInfoPage() {
-  const [activeMenuItem, setActiveMenuItem] = useState(0)
+  const [activeMenuItem, setActiveMenuItem] = useState(0);
 
   // Data structures
   const menuItems = [
-    { icon: User, label: "Personal info", active: true },
-    { icon: Shield, label: "Login and security", active: false },
-    { icon: CreditCard, label: "My payments", active: false },
-    { icon: Gift, label: "My voucher", active: false },
-    { icon: Award, label: "My points", active: false },
-    { icon: Package, label: "My orders", active: false },
-  ]
+    { icon: User, label: 'Personal info', active: true },
+    { icon: Shield, label: 'Login and security', active: false },
+    { icon: CreditCard, label: 'My payments', active: false },
+    { icon: Gift, label: 'My voucher', active: false },
+    { icon: Award, label: 'My points', active: false },
+    { icon: Package, label: 'My orders', active: false },
+  ];
 
-  const navigationItems = ["Início", "Produtos", "Blog", "Programa", "Contato", "Mais"]
+  const navigationItems = ['Início', 'Produtos', 'Blog', 'Programa', 'Contato', 'Mais'];
 
   const footerSections = [
     {
-      title: "Sweetdeli",
-      items: ["Contato", "sac@mercadoonline.com", "+55 81 92345-0394", "123 Rua, Pernambuco, Brasil"],
+      title: 'Sweetdeli',
+      items: [
+        'Contato',
+        'sac@mercadoonline.com',
+        '+55 81 92345-0394',
+        '123 Rua, Pernambuco, Brasil',
+      ],
     },
     {
-      title: "Outros sites",
-      items: ["Contato", "sac@mercadoonline.com", "+55 81 92345-0394", "123 Rua, Pernambuco, Brasil"],
+      title: 'Outros sites',
+      items: [
+        'Contato',
+        'sac@mercadoonline.com',
+        '+55 81 92345-0394',
+        '123 Rua, Pernambuco, Brasil',
+      ],
     },
     {
-      title: "Sobre a",
-      items: ["Contato", "sac@mercadoonline.com", "+55 81 92345-0394", "123 Rua, Pernambuco, Brasil"],
+      title: 'Sobre a',
+      items: [
+        'Contato',
+        'sac@mercadoonline.com',
+        '+55 81 92345-0394',
+        '123 Rua, Pernambuco, Brasil',
+      ],
     },
     {
-      title: "Get the app",
-      items: ["Contato", "sac@mercadoonline.com", "+55 81 92345-0394", "123 Rua, Pernambuco, Brasil"],
+      title: 'Get the app',
+      items: [
+        'Contato',
+        'sac@mercadoonline.com',
+        '+55 81 92345-0394',
+        '123 Rua, Pernambuco, Brasil',
+      ],
     },
-  ]
+  ];
 
-  const formFields = ["Display name", "First name", "Phone", "Email"]
+  const formFields = ['Display name', 'First name', 'Phone', 'Email'];
 
   return (
     <div className="bg-yellow-100 min-h-screen">
@@ -93,21 +114,21 @@ export default function PersonalInfoPage() {
           <CardContent className="p-6">
             <nav className="space-y-2">
               {menuItems.map((item, index) => {
-                const IconComponent = item.icon
+                const IconComponent = item.icon;
                 return (
                   <div
                     key={index}
                     onClick={() => setActiveMenuItem(index)}
                     className={`flex items-center space-x-3 px-4 py-3 rounded-lg cursor-pointer transition-colors ${
                       item.active
-                        ? "bg-yellow-200 text-gray-900 font-medium"
-                        : "text-gray-600 hover:bg-yellow-200 hover:text-gray-900"
+                        ? 'bg-yellow-200 text-gray-900 font-medium'
+                        : 'text-gray-600 hover:bg-yellow-200 hover:text-gray-900'
                     }`}
                   >
                     <IconComponent className="w-5 h-5" />
                     <span className="text-sm">{item.label}</span>
                   </div>
-                )
+                );
               })}
             </nav>
           </CardContent>
@@ -205,5 +226,5 @@ export default function PersonalInfoPage() {
         </div>
       </footer>
     </div>
-  )
+  );
 }

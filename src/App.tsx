@@ -7,6 +7,7 @@ import { cartRoutes } from './modules/cart/routes';
 import { homeScreenRoutes } from './modules/home/routes';
 import { loginRoutes } from './modules/login/routes';
 import { paymentRoutes } from './modules/payment/routes';
+import { personalInfoScreenRoutes } from './modules/personalInfoPage/routes';
 import { productScreenRoutes } from './modules/product/routes';
 import { registerRoutes } from './modules/register/routes';
 import { URL_USER } from './shared/constants/urls';
@@ -27,6 +28,7 @@ const router = createBrowserRouter([
   ...loginRoutes,
   ...registerRoutes,
   ...adminScreenRoutes,
+  ...personalInfoScreenRoutes,
 
   // Rota de Layout: envolve as outras rotas
   {

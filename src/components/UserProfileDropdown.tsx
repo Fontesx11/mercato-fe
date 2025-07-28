@@ -1,6 +1,8 @@
-import { useRequest } from '@/shared/hooks/useResquest';
 import { CreditCard, LogOut, ShieldUser, ShoppingBag, Star, Ticket, User } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
+
+import { useRequest } from '@/shared/hooks/useResquest';
+
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -34,7 +36,10 @@ export default function UserProfileDropdown() {
         </DropdownMenuLabel>
 
         <DropdownMenuItem asChild>
-          <Link to="/" className="p-3 cursor-pointer hover:bg-accent/80 transition-colors">
+          <Link
+            to="/personal-info"
+            className="p-3 cursor-pointer hover:bg-accent/80 transition-colors"
+          >
             <User className="mr-3 h-5 w-5 text-muted-foreground" />
             <span className="font-bold text-sm text-muted-foreground">Personal Info</span>
           </Link>
