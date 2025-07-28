@@ -52,7 +52,7 @@ export const connectionAPIDelete = async <T>(url: string) => {
   return ConnectionAPI.connect<T>(url, MethodsEnum.DELETE);
 };
 
-export const connectionAPIPost = async <T>(url: string, body: unknown): Promise<T> => {
+export const connectionAPIPost = async <T>(url: string, body?: unknown): Promise<T> => {
   return ConnectionAPI.connect<T>(url, MethodsEnum.POST, body);
 };
 

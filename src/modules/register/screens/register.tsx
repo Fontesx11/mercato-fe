@@ -1,4 +1,4 @@
-import { Apple, Facebook, Mail, ShoppingCart } from 'lucide-react';
+import { Apple, Facebook, Mail } from 'lucide-react';
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 
@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import Logo from "@/logo.svg?react";
 
 export default function RegisterScreen() {
   const [fullName, setFullName] = useState('');
@@ -20,7 +21,7 @@ export default function RegisterScreen() {
         {/* Logo */}
         <div className="bg-white p-4 rounded-lg mb-8">
           <div className="flex items-center space-x-2">
-            <ShoppingCart className="h-8 w-8 text-teal-500" />
+            <Logo className="w-10 h-10" />
             <div>
               <div className="font-bold text-teal-500 text-lg">Mercato</div>
               <div className="text-teal-500 text-sm">ONLINE</div>
